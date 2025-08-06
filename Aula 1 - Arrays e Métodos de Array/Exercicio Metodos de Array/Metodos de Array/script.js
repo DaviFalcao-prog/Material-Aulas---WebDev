@@ -91,7 +91,8 @@ function executarMap() {
 
  function executarMapHTML() {
     const dispositivos = ['🎮', '🕹️', '💻'];
-    const resultado = dispositivos.map(pegaItem => {`
+    const resultado = dispositivos.map(pegaItem => {
+      return`
       <h1>Item em promoção</h1>
       <p>${pegaItem}</p>
       `});
