@@ -22,17 +22,49 @@ let posts = [
 
 // Inicialização
 window.onload = function() {
+    carregarLocalStorage()
     displayPosts();
 
     document.getElementById('postForm').addEventListener('submit', addPost); 
+
+    document.querySelector("#postList").addEventListener('click', handleclick)
+
+    // let nome = 'Caio'
+    // localStorage.setItem("nome",nome)
+    // console.log(localStorage.getItem("nome"))
+    // localStorage.removeItem("nome");
+    // localStorage.clear();
 };
+function salvarLocalStorage(){
+    localStorage.setItem("posts", JSON.stringify(posts))
+
+}
+function carregarLocalStorage(){
+    const postGuardados = localStorage.getItem("posts")
+
+    if(postGuardados){
+        posts = JSON.parse(postGuardados)
+    }
+}
+function handleclick(infosdoevento){
+
+        const action = infosdoevento.target.dataset.action;
+        const index = infosdoevento.target.dataset.index;
+
+        if (action == "Editar"){
+            editarPost(index)
+        }
+        else if (action === "Apagar"){
+            apagarPost(index)
+        }
+}
 
 // Função para exibir os posts
 function displayPosts() {
     const postList = document.getElementById('postList');
     postList.innerHTML = '';
 
-    posts.forEach(pegaPost => {
+    posts.forEach((pegaPost, index) => {
             const postElement = document.createElement('div');
             postElement.classList.add('card-post');
   
@@ -41,8 +73,8 @@ function displayPosts() {
                 ${pegaPost.image ? `<img src="${pegaPost.image}" alt="Imagem do post" style="max-width:150px;">` : ""}
                 <p><em>Categoria: ${pegaPost.category}</em></p>
                 <p><em>Data e Hora: ${pegaPost.date}</em></p>
-                <button><i class="fa-solid fa-pen-to-square"></i> Editar</button>
-                <button><i class="fa-solid fa-eraser"></i> Apagar</button>
+                <button data-action="Editar" data-index=${index}><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                <button data-action="Apagar" data-index=${index}><i class="fa-solid fa-eraser"></i> Apagar</button>
                 <hr style="margin:30px;">`;
                
             postList.append(postElement);
@@ -66,8 +98,24 @@ function addPost(event) {
     };
     
     posts.unshift(post);
-    
+    salvarLocalStorage()
     document.getElementById('postForm').reset();
     
     displayPosts();
+}
+
+//update
+function editarPost(index){
+    const novoTexto = prompt("Edite seu post", posts[index].text);
+    posts[index].text = novoTexto;
+
+    displayPosts();
+}
+//delete
+function apagarPost(index){
+    const confirmar = confirm("Você realmente deseja excluir?")
+    if(confirmar){
+    posts.splice(index,1)
+    }
+    displayPosts()
 }
